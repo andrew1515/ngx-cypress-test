@@ -1,10 +1,9 @@
 /// <reference types="cypress" />
+import { openFormsLayouts } from "../support/helpers";
 
-describe("Our first suite", () => {
+describe("Our second suite", () => {
   it("first test", () => {
-    cy.visit("/");
-    cy.contains("Forms").click();
-    cy.contains("Form Layouts").click();
+    openFormsLayouts();
 
     // find by Tag name
     cy.get("input");
@@ -47,10 +46,8 @@ describe("Our first suite", () => {
     cy.get('[data-cy="inputEmail1"]');
   });
 
-  it.only("second test", () => {
-    cy.visit("/");
-    cy.contains("Forms").click();
-    cy.contains("Form Layouts").click();
+  it("second test", () => {
+    openFormsLayouts();
 
     /**
      * cy.get
@@ -99,63 +96,5 @@ describe("Our first suite", () => {
       .parents("form")
       .find("nb-checkbox")
       .click();
-  });
-
-  it.only("then and wrap methods", () => {
-    cy.visit("/");
-    cy.contains("Forms").click();
-    cy.contains("Form Layouts").click();
-
-    /**
-     * This will not work!
-     *
-     * Because Cypress is asynchronous, we can't save the queried DOM elements in a variable like this
-     */
-    // const firstForm = cy.contains("nb-card", "Using the Grid");
-    // const secondForm = cy.contains("nb-card", "Basic form");
-
-    // firstForm.find('[for="inputEmail1"]').should("contain", "Email");
-    // firstForm.find('[for="inputPassword2"]').should("contain", "Password");
-    // secondForm
-    //   .find('[for="exampleInputPassword1"]')
-    //   .should("contain", "Password");
-
-    /**
-     * Instead of that, we need to use the "then" function. This is some form of Promise.then and with
-     * quite a similar functionality. Now the we get the DOM element in the "firstForm" parameter from the
-     * "then" function's callback.
-     *
-     * Note, that the "firstForm" will be not a Cypress chainable, but a JQuery element, so also the "find"
-     * method we call on it, will return not a Cypress chainable, but a JQuery element. On JQuery elements we
-     * can't call the Cypress specific assertions like "should", so we do the assertion with comparing the texts
-     * of the two elements with the "expect" assertion.
-     */
-    cy.contains("nb-card", "Using the Grid").then((firstForm) => {
-      const firstEmailLabel = firstForm.find('[for="inputEmail1"]').text();
-      const firstPasswordLabel = firstForm
-        .find('[for="inputPassword2"]')
-        .text();
-
-      expect(firstEmailLabel).to.equal("Email");
-      expect(firstPasswordLabel).to.equal("Password");
-
-      /**
-       * We can have nested "then" calls if our tests are depending on multiple elements.
-       */
-      cy.contains("nb-card", "Basic form").then((secondForm) => {
-        const secondEmailLabel = secondForm
-          .find('[for="exampleInputEmail1"]')
-          .text();
-        expect(firstEmailLabel).not.to.equal(secondEmailLabel);
-
-        /**
-         * If we want to convert a JQuery element to a Cypress chainable, we can call the
-         * "wrap" function with that element.
-         */
-        cy.wrap(secondForm)
-          .find('[for="exampleInputPassword1"]')
-          .should("contain", "Password");
-      });
-    });
   });
 });

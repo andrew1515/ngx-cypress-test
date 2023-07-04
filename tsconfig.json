@@ -13,6 +13,7 @@
     "typeRoots": ["node_modules/@types"],
     "types": ["cypress", "node"],
     "lib": ["es2017", "dom"],
-    "plugins": [{ "name": "tslint-language-service" }]
+    "plugins": [{ "name": "tslint-language-service" }],
+    "skipLibCheck": true
   }
 }

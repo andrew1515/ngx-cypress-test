@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
 import { openFormsLayouts } from "../support/helpers";
 
-describe("Our second suite", () => {
-  it("first test", () => {
+describe("Querying DOM elements", () => {
+  it("Query by selectors", () => {
     openFormsLayouts();
 
     // find by Tag name
@@ -46,7 +46,7 @@ describe("Our second suite", () => {
     cy.get('[data-cy="inputEmail1"]');
   });
 
-  it("second test", () => {
+  it("More advanced querying", () => {
     openFormsLayouts();
 
     /**

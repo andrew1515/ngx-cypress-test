@@ -44,7 +44,8 @@ describe("radio buttons and checkboxes", () => {
     /**
      * In the case we have multiple checkboxes returned by the query,
      * the check() method will check all of them.
-     * This, however, isn't working on click() for example.
+     * This, however, isn't working on click() for example. For click() you should use the "multiple: true" property
+     * to click through every element.
      *
      * BUT: there is a specific behavior of the check() method in case of checkboxes:
      * if we call the check() method on an already checked checkbox, the check() method
@@ -85,5 +86,18 @@ describe("radio buttons and checkboxes", () => {
         // Checking whether every checkbox is unchecked.
         cy.wrap(checkbox).should("not.be.checked");
       });
+
+    /**
+     * Alternative with .click({ multiple: true })
+     */
+    cy.get('[type="checkbox"]')
+      .check({ force: true })
+      .click({ multiple: true, force: true })
+      // If asserting multiple elements (checkboxes in this case) with "should", the assertion will run on every element.
+      .should("not.be.checked");
   });
 });
+
+// .type()
+// .clear()
+// .wait()

@@ -15,3 +15,9 @@ export function openToastrPage() {
   cy.contains("Modal & Overlays").click();
   cy.contains("Toastr").click();
 }
+
+export function openSmartTable() {
+  cy.visit("/");
+  cy.contains("Tables & Data").click();
+  cy.contains("Smart Table").click();
+}

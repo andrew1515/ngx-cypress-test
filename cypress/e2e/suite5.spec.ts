@@ -1,6 +1,6 @@
 import { openFormsLayouts, openToastrPage } from "../support/helpers";
 
-describe("suite 5", () => {
+describe("radio buttons and checkboxes", () => {
   it("radio buttons", () => {
     openFormsLayouts();
 
@@ -51,13 +51,39 @@ describe("suite 5", () => {
      * will not uncheck it. So the check() method checks the checkbox if it isn't checked,
      * but not the other way.
      */
-    cy.get('[type="checkbox"').check({ force: true });
+    cy.get('[type="checkbox"]').check({ force: true });
 
     /**
      * If we want to uncheck a checkbox, we have to use the click() method.
      * (It is working also for checking the checkboxes, but for this purpose the check() method
      * is recommended.)
+     *
+     * Then we make the assertion, that the checkbox isn't checked (because in the previous command we checked
+     * all the checkboxes, so if we now click on any checkbox, it should deselect).
+     *
+     * We can chain this command with the previous, but we separated them to be able to document them better.
      */
-    cy.get('[type="checkbox"').eq(0).click({ force: true });
+    cy.get('[type="checkbox"]')
+      .eq(0)
+      .click({ force: true })
+      .should("not.be.checked");
+
+    /**
+     * If we want to check every checkbox and then uncheck them, we can do it as following.
+     *
+     * each - it is quite similar to "then", but if we have multiple elements returned by the previous
+     *   method in the chain, we can iterate through them. (With "then" we just get the whole thing back and
+     *   we need to handle the iteration by ourselves).
+     */
+    cy.get('[type="checkbox"]')
+      .check({ force: true })
+      .each((checkbox) => {
+        // Clicking on all the checkboxes to uncheck them.
+        cy.wrap(checkbox).click({ force: true });
+      })
+      .each((checkbox) => {
+        // Checking whether every checkbox is unchecked.
+        cy.wrap(checkbox).should("not.be.checked");
+      });
   });
 });

@@ -1,9 +1,12 @@
-/// <reference types="cypress" />
-import { openFormsLayouts } from "../support/helpers";
+import { navigation } from "../support/page-objects/navigationPage";
 
 describe("then and wrap methods", () => {
+  beforeEach(() => {
+    cy.openHomePage();
+  });
+
   it("the test", () => {
-    openFormsLayouts();
+    navigation.navigateToFormLayouts();
 
     /**
      * This will not work!

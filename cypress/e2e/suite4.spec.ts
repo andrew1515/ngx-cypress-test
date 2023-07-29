@@ -1,7 +1,10 @@
-/// <reference types="cypress" />
-import { openFormsLayouts, openFormsDatepickers } from "../support/helpers";
+import { navigation } from "../support/page-objects/navigationPage";
 
 describe("invoke command", () => {
+  beforeEach(() => {
+    cy.openHomePage();
+  });
+
   /**
    * The "invoke" command is for calling a method with one or more parameters on the wrapped previous element of the chain.
    * So let's have an example:
@@ -15,7 +18,7 @@ describe("invoke command", () => {
    */
 
   it("invoke command test - invoking text content", () => {
-    openFormsLayouts();
+    navigation.navigateToFormLayouts();
 
     /**
      * In this case the "invoke" command is useful because we don't have to call the .text() method separately, the "invoke" command calls
@@ -29,7 +32,7 @@ describe("invoke command", () => {
   });
 
   it("invoke command test - invoking class attribute", () => {
-    openFormsLayouts();
+    navigation.navigateToFormLayouts();
 
     /**
      * Here it is even more useful. If there wouldn't be the "invoke" command, we should have a .then() block and make the assertion there.
@@ -55,7 +58,7 @@ describe("invoke command", () => {
   });
 
   it("invoke command test - alternative to invoking class attribute without invoke", () => {
-    openFormsLayouts();
+    navigation.navigateToFormLayouts();
 
     /**
      * There is an alternative to this, however, without the "invoke" command:
@@ -68,7 +71,7 @@ describe("invoke command", () => {
   });
 
   it("invoke command test - alternative to invoking style property", () => {
-    openFormsLayouts();
+    navigation.navigateToFormLayouts();
 
     /**
      * We can do something similar also with CSS styles as with classes before:
@@ -86,7 +89,7 @@ describe("invoke command", () => {
    * with which we can access properties of the given DOM element, like "value", "scrollHeight", etc.
    */
   it("invoke command test - invoking the 'value' property", () => {
-    openFormsDatepickers();
+    navigation.navigateToFormsDatepickers();
 
     // Wrapping everything into "then" block, because we will use the input element multiple times.
     cy.contains("nb-card", "Common Datepicker")

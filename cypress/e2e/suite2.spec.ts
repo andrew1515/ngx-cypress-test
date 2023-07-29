@@ -1,9 +1,12 @@
-/// <reference types="cypress" />
-import { openFormsLayouts } from "../support/helpers";
+import { navigation } from "../support/page-objects/navigationPage";
 
 describe("Querying DOM elements", () => {
+  beforeEach(() => {
+    cy.openHomePage();
+  });
+
   it("Query by selectors", () => {
-    openFormsLayouts();
+    navigation.navigateToFormLayouts();
 
     // find by Tag name
     cy.get("input");
@@ -47,7 +50,7 @@ describe("Querying DOM elements", () => {
   });
 
   it("More advanced querying", () => {
-    openFormsLayouts();
+    navigation.navigateToFormLayouts();
 
     /**
      * cy.get

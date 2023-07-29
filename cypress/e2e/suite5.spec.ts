@@ -1,8 +1,12 @@
-import { openFormsLayouts, openToastrPage } from "../support/helpers";
+import { navigation } from "../support/page-objects/navigationPage";
 
 describe("radio buttons and checkboxes", () => {
+  beforeEach(() => {
+    cy.openHomePage();
+  });
+
   it("radio buttons", () => {
-    openFormsLayouts();
+    navigation.navigateToFormLayouts();
 
     cy.contains("nb-card", "Using the Grid")
       .find('[type="radio"]')
@@ -39,7 +43,7 @@ describe("radio buttons and checkboxes", () => {
   });
 
   it("checkboxes", () => {
-    openToastrPage();
+    navigation.navigateToToastrPage();
 
     /**
      * In the case we have multiple checkboxes returned by the query,

@@ -14,6 +14,7 @@ export class FormLayoutsComponent {
   });
 
   usersList$ = this.http.get("https://jsonplaceholder.typicode.com/users");
+  currentUser$ = this.http.get("https://jsonplaceholder.typicode.com/users/1");
 
   constructor(private http: HttpClient, private fb: FormBuilder) {}
 

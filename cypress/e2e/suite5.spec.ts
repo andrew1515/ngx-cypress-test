@@ -101,7 +101,3 @@ describe("radio buttons and checkboxes", () => {
       .should("not.be.checked");
   });
 });
-
-// .type()
-// .clear()
-// .wait()

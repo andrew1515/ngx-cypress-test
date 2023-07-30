@@ -30,6 +30,7 @@
 declare namespace Cypress {
   interface Chainable {
     openHomePage(): void;
+    login(): void;
   }
 }
 
@@ -39,4 +40,11 @@ declare namespace Cypress {
  */
 Cypress.Commands.add("openHomePage", () => {
   cy.visit("/");
+});
+
+Cypress.Commands.add("login", () => {
+  cy.visit("/auth/login");
+  cy.get('[placeholder="Email address"]').type("andras15@gmail.com");
+  cy.get('[placeholder="Password"]').type("12345678");
+  cy.get("form").submit();
 });

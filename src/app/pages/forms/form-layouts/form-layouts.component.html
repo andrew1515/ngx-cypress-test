@@ -3,9 +3,25 @@
     <nb-card class="inline-form-card">
       <nb-card-header>Inline form</nb-card-header>
       <nb-card-body>
-        <form class="form-inline">
-          <input type="text" nbInput fullWidth placeholder="Jane Doe" />
-          <input type="text" nbInput fullWidth placeholder="Email" />
+        <form
+          [formGroup]="inlineForm"
+          class="form-inline"
+          (ngSubmit)="onInlineFormSubmit()"
+        >
+          <input
+            type="text"
+            nbInput
+            fullWidth
+            placeholder="Jane Doe"
+            formControlName="name"
+          />
+          <input
+            type="text"
+            nbInput
+            fullWidth
+            placeholder="Email"
+            formControlName="email"
+          />
           <nb-checkbox>Remember me</nb-checkbox>
           <button type="submit" nbButton status="primary">Submit</button>
         </form>
@@ -239,5 +255,16 @@
         </form>
       </nb-card-body>
     </nb-card>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <p>List of users:</p>
+    <ul>
+      <li *ngFor="let user of usersList$ | async">
+        Name: {{ user.name }} | Email: {{ user.email }}
+      </li>
+    </ul>
   </div>
 </div>

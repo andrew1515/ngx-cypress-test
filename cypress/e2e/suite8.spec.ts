@@ -3,7 +3,7 @@ import { formLayouts } from "../support/page-objects/formLayoutsPage";
 
 // For more detailed informations about interceptions, see: https://docs.cypress.io/api/commands/intercept
 
-describe("intercepts", () => {
+describe("intercepts and making HTTP requests from Cypress", () => {
   beforeEach(() => {
     cy.openHomePage();
   });
@@ -16,8 +16,12 @@ describe("intercepts", () => {
       "createNewUser"
     );
 
+    cy.intercept("GET", "https://jsonplaceholder.typicode.com/users").as(
+      "getUsers"
+    );
+
     navigation.navigateToFormLayouts();
-    formLayouts.submitInlineForm("Andrew", "andras15@gmail.com");
+    formLayouts.submitInlineForm("Andrew 1", "test1@gmail.com");
 
     /**
      * We are actively waiting to the particular request to be executed.
@@ -26,15 +30,42 @@ describe("intercepts", () => {
      * should return the credentials of the newly created user).
      *
      * This is useful when:
-     * - We want to execute some test assertions after the HTTP request is completed in the app, f.e.
-     *   when some parts of the app will render only after the particular HTTP request
-     * - If we want to also test the correctness of the response. I think this one is not used too often, I think
-     *   in case of frontend tests, we are rather testing the concrete UI elements, which are holding the response data.
+     * 1) We want to execute some test assertions after the HTTP request is completed in the app, f.e.
+     *    when some parts of the app will render only after the particular HTTP request.
+     * 2) If we want to also test the correctness of the response. We can check directly the response or check the UI, whether the
+     *    correct data are rendered.
+     * 3) If we want to test whether the response is rendered correctly. In this case we don't bother about the data correctness,
+     *    we just want to test, whether the data from the response are rendered correctly in the app.
      */
     cy.wait("@createNewUser").then((interception) => {
+      // This is the case 2). We are checking directly the response, because we aren't rendering the new user in the UI. But mostly
+      // that's the case.
       expect(interception.response.statusCode).to.equal(201);
-      expect(interception.response.body.name).to.equal("Andrew");
-      expect(interception.response.body.email).to.equal("andras15@gmail.com");
+      expect(interception.response.body.name).to.equal("Andrew 1");
+      expect(interception.response.body.email).to.equal("test1@gmail.com");
+    });
+
+    cy.wait("@getUsers").then((interception) => {
+      // This is the case 3)
+      const firstUser = interception.response.body[0];
+      const secondUser = interception.response.body[1];
+
+      cy.get(".users-list").then((usersList) => {
+        cy.wrap(usersList)
+          .find("li.user-item")
+          .eq(0)
+          .should(
+            "contain",
+            `Name: ${firstUser.name} | Email: ${firstUser.email}`
+          );
+        cy.wrap(usersList)
+          .find("li.user-item")
+          .eq(1)
+          .should(
+            "contain",
+            `Name: ${secondUser.name} | Email: ${secondUser.email}`
+          );
+      });
     });
   });
 
@@ -45,7 +76,8 @@ describe("intercepts", () => {
      *
      * This is useful when we don't care about the server functionality, we just want to know that
      * our data are correctly rendered in the app. So if this test fails, we will know, that something
-     * is with the UI.
+     * is with the UI. So it's similar as the case 3) in the previous test, but now without making the actual API call,
+     * rather using a mock.
      */
     cy.intercept("GET", "https://jsonplaceholder.typicode.com/users", {
       fixture: "users.json",
@@ -130,7 +162,7 @@ describe("intercepts", () => {
       "https://jsonplaceholder.typicode.com/users",
       (req) => {
         // Modifying the request body
-        req.body.name = "Modified Andrew";
+        req.body.name = "Modified request Andrew 2";
 
         // "continue" sends the request to the server and returns the response from the server.
         // After that we can work with that response, f.e. modify it.
@@ -138,19 +170,63 @@ describe("intercepts", () => {
         // response in my tests, I would use a fully mocked response without touching the server.
         // But good to know there is such an option.
         req.continue((res) => {
-          expect(res.body.name).to.equal("Modified Andrew");
-          res.body.name = "Modified Andrew 2";
+          expect(res.body.name).to.equal("Modified request Andrew 2");
+          res.body.name = "Modified response Andrew 2";
         });
       }
     ).as("createNewUser");
 
     navigation.navigateToFormLayouts();
-    formLayouts.submitInlineForm("Andrew", "andras15@gmail.com");
+    formLayouts.submitInlineForm("Andrew 2", "test2@gmail.com");
 
     cy.wait("@createNewUser").then((interception) => {
+      // Again, we aren't rendering the new user in the UI, so we are checking the response directly.
       expect(interception.response.statusCode).to.equal(201);
-      expect(interception.response.body.name).to.equal("Modified Andrew 2");
-      expect(interception.response.body.email).to.equal("andras15@gmail.com");
+      expect(interception.response.body.name).to.equal(
+        "Modified response Andrew 2"
+      );
+      expect(interception.response.body.email).to.equal("test2@gmail.com");
     });
+  });
+
+  /**
+   * Making HTTP requests directly from Cypress (so not from the app) is useful for:
+   * - Pre-creating testing data. F.e. we want to test, whether the user deleting function is working in our app.
+   *   But we don't want to click through the whole user creation process in our test, we want to just test
+   *   the deletion. So in this case it's a better idea to pre-create some user through API request and then test only
+   *   the deletion in Cypress.
+   *
+   * Note: this test will not work here, because POST https://jsonplaceholder.typicode.com/users won't actually
+   * create the user (it's a faker API), so the "Andrew 3" user will be not rendered in the users list. But in ideal real-life situation
+   * this should work.
+   */
+  it.skip("making HTTP requests", () => {
+    cy.request({
+      url: "https://jsonplaceholder.typicode.com/users",
+      method: "POST",
+      body: {
+        name: "Andrew 3",
+        email: "test3@gmail.com",
+      },
+    })
+      .its("body")
+      .then((body) => {
+        cy.intercept(
+          "DELETE",
+          `https://jsonplaceholder.typicode.com/users/${body.id}`
+        ).as("deleteUser");
+
+        navigation.navigateToFormLayouts();
+
+        cy.contains("li.user-item", "test3@gmail.com")
+          .find(".delete-user")
+          .click();
+
+        cy.wait("@deleteUser").then((interception) => {
+          // Again, in practice, we are mostly checking the UI (whether the user is removed from the UI) and
+          // not the response status code itself
+          expect(interception.response.statusCode).to.equal(200);
+        });
+      });
   });
 });

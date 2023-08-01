@@ -262,8 +262,11 @@
   <div class="col-md-12">
     <p>List of users:</p>
     <ul>
-      <li *ngFor="let user of usersList$ | async">
-        Name: {{ user.name }} | Email: {{ user.email }}
+      <li *ngFor="let user of usersList$ | async" class="user-item">
+        Name: {{ user.name }} | Email: {{ user.email }} |
+        <span (click)="onUserDelete(user.id)" class="clickable delete-user"
+          >DELETE</span
+        >
       </li>
     </ul>
   </div>

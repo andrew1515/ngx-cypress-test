@@ -29,4 +29,10 @@ export class FormLayoutsComponent {
       })
       .subscribe();
   }
+
+  onUserDelete(userId: number): void {
+    this.http
+      .delete(`https://jsonplaceholder.typicode.com/users/${200}`)
+      .subscribe();
+  }
 }

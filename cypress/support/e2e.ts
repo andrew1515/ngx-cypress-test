@@ -22,3 +22,11 @@ import "./commands";
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+/**
+ * This beforeEach hook will run before EVERY test. This hook also will run before all "beforeEach" hooks from the
+ * inside of the "describe" blocks.
+ */
+beforeEach(() => {
+  cy.log("BEFORE EVERY TEST");
+});

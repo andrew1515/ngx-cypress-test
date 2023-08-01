@@ -5,6 +5,7 @@ import { formLayouts } from "../support/page-objects/formLayoutsPage";
 
 describe("intercepts and making HTTP requests from Cypress", () => {
   beforeEach(() => {
+    cy.login();
     cy.openHomePage();
   });
 

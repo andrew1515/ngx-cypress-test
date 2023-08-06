@@ -29,4 +29,5 @@ import "./commands";
  */
 beforeEach(() => {
   cy.log("BEFORE EVERY TEST");
+  cy.log(Cypress.env("asd"));
 });

@@ -16,6 +16,6 @@ describe("example with page objects", () => {
      * would be very hard to read. But now with Page object method calls, it is much better.
      */
     navigation.navigateToFormLayouts();
-    formLayouts.submitInlineForm("Andrew", "andras15@gmail.com");
+    formLayouts.submitInlineForm("Andrew", Cypress.env("userEmail"));
   });
 });

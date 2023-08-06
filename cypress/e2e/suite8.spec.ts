@@ -13,13 +13,9 @@ describe("intercepts and making HTTP requests from Cypress", () => {
     /**
      * Registering the request to be intercepted from the app.
      */
-    cy.intercept("POST", "https://jsonplaceholder.typicode.com/users").as(
-      "createNewUser"
-    );
+    cy.intercept("POST", `${Cypress.env("apiUrl")}/users`).as("createNewUser");
 
-    cy.intercept("GET", "https://jsonplaceholder.typicode.com/users").as(
-      "getUsers"
-    );
+    cy.intercept("GET", `${Cypress.env("apiUrl")}/users`).as("getUsers");
 
     navigation.navigateToFormLayouts();
     formLayouts.submitInlineForm("Andrew 1", "test1@gmail.com");
@@ -80,7 +76,7 @@ describe("intercepts and making HTTP requests from Cypress", () => {
      * is with the UI. So it's similar as the case 3) in the previous test, but now without making the actual API call,
      * rather using a mock.
      */
-    cy.intercept("GET", "https://jsonplaceholder.typicode.com/users", {
+    cy.intercept("GET", `${Cypress.env("apiUrl")}/users`, {
       fixture: "users.json",
     });
 
@@ -125,7 +121,7 @@ describe("intercepts and making HTTP requests from Cypress", () => {
       {
         method: "GET",
         // If we wouldn't bother about the hostname, we could just use "pathname: '/users/*'"
-        url: "https://jsonplaceholder.typicode.com/users/*",
+        url: `${Cypress.env("apiUrl")}/users/*`,
       },
       {
         name: "Andrew Mock",
@@ -140,7 +136,7 @@ describe("intercepts and making HTTP requests from Cypress", () => {
     // cy.intercept(
     //   {
     //     method: "GET",
-    //     url: "https://jsonplaceholder.typicode.com/users/*",
+    //     url: `${Cypress.env('apiUrl')}/users/*`,
     //   },
     //   (req) => {
     //     req.reply({
@@ -158,24 +154,20 @@ describe("intercepts and making HTTP requests from Cypress", () => {
   });
 
   it("modifying request/response payload", () => {
-    cy.intercept(
-      "POST",
-      "https://jsonplaceholder.typicode.com/users",
-      (req) => {
-        // Modifying the request body
-        req.body.name = "Modified request Andrew 2";
+    cy.intercept("POST", `${Cypress.env("apiUrl")}/users`, (req) => {
+      // Modifying the request body
+      req.body.name = "Modified request Andrew 2";
 
-        // "continue" sends the request to the server and returns the response from the server.
-        // After that we can work with that response, f.e. modify it.
-        // I really can't think of any use-cases for this, because if I would need an exact hardcoded
-        // response in my tests, I would use a fully mocked response without touching the server.
-        // But good to know there is such an option.
-        req.continue((res) => {
-          expect(res.body.name).to.equal("Modified request Andrew 2");
-          res.body.name = "Modified response Andrew 2";
-        });
-      }
-    ).as("createNewUser");
+      // "continue" sends the request to the server and returns the response from the server.
+      // After that we can work with that response, f.e. modify it.
+      // I really can't think of any use-cases for this, because if I would need an exact hardcoded
+      // response in my tests, I would use a fully mocked response without touching the server.
+      // But good to know there is such an option.
+      req.continue((res) => {
+        expect(res.body.name).to.equal("Modified request Andrew 2");
+        res.body.name = "Modified response Andrew 2";
+      });
+    }).as("createNewUser");
 
     navigation.navigateToFormLayouts();
     formLayouts.submitInlineForm("Andrew 2", "test2@gmail.com");
@@ -203,7 +195,7 @@ describe("intercepts and making HTTP requests from Cypress", () => {
    */
   it.skip("making HTTP requests", () => {
     cy.request({
-      url: "https://jsonplaceholder.typicode.com/users",
+      url: `${Cypress.env("apiUrl")}/users`,
       method: "POST",
       body: {
         name: "Andrew 3",
@@ -212,10 +204,9 @@ describe("intercepts and making HTTP requests from Cypress", () => {
     })
       .its("body")
       .then((body) => {
-        cy.intercept(
-          "DELETE",
-          `https://jsonplaceholder.typicode.com/users/${body.id}`
-        ).as("deleteUser");
+        cy.intercept("DELETE", `${Cypress.env("apiUrl")}/users/${body.id}`).as(
+          "deleteUser"
+        );
 
         navigation.navigateToFormLayouts();
 

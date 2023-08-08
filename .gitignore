@@ -41,3 +41,6 @@ testem.log
 Thumbs.db
 
 cypress.env.json
+cypress/videos
+cypress/results
+cypress/screenshots

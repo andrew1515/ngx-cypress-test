@@ -17,6 +17,18 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
+    // How many times we want to retry failed tests.
+    // runMode - if we run Cypress tests with 'npx cypress run' (mostly headless mode)
+    // openMode - if we dun Cypress tests with 'npx cypress open'
+    retries: {
+      runMode: 1,
+      openMode: 0,
+    },
+  },
+  // Added reporters config. More info here: https://docs.cypress.io/guides/tooling/reporters
+  reporter: "cypress-multi-reporters",
+  reporterOptions: {
+    configFile: "reporter-config.json",
   },
   env: {
     apiUrl: "https://jsonplaceholder.typicode.com",

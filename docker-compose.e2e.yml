@@ -1,0 +1,16 @@
+version: "3.8"
+
+# Docker compose for creating Docker container to run Cypress tests in a CI environment like
+# Github Actions. The advantage is, that you don't need to install browsers and all the other things
+# by yourself in the CI, you just provide a container which contains everything. (Probably you can't even
+# install a browser straight in the Github Actions.)
+# Another advantage is, that you can initialize multiple containers (f.e. if we would have also an API and a DB)
+# with one command and everything will be configured in the docker-compose.
+services:
+  e2e:
+    build: "."
+    container_name: "ngx_cypress_test"
+    command: npm run cypress:e2e:ci
+    # It's here for the case if we would want to have mocha and JUnit reports generated also from tests running in the Docker container.
+    volumes:
+      - ./docker/cypress/results:/app/cypress/results

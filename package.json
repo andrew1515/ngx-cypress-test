@@ -31,7 +31,9 @@
     "release:changelog": "npm run conventional-changelog -- -p angular -i CHANGELOG.md -s",
     "cypress:open": "npx cypress open",
     "cypress:run": "npm run delete:reports ; npx cypress run ; npm run combine:reports:junit ; npm run combine:reports:mochawesome",
-    "cypress:e2e": "start-server-and-test start http-get://localhost:4200 cypress:open",
+    "cypress:ci": "npx cypress run -C cypress.config.ci.ts",
+    "cypress:e2e:open": "start-server-and-test start http-get://localhost:4200 cypress:open",
+    "cypress:e2e:ci": "start-server-and-test start http-get://localhost:4200 cypress:ci",
     "delete:reports": "rm -r cypress/results/* || true",
     "combine:reports:junit": "jrm cypress/results/junit/combined-report.xml \"cypress/results/junit/*.xml\"",
     "combine:reports:mochawesome": "npx mochawesome-merge cypress/results/mochawesome/*.json > cypress/results/mochawesome/combined-report.json && npx marge -o cypress/results/mochawesome/html cypress/results/mochawesome/combined-report.json"

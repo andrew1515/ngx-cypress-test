@@ -14,7 +14,11 @@ describe(
       cy.openHomePage();
     });
 
-    it("intercepting request from the app and getting the response from it", () => {
+    it("intercepting request from the app and getting the response from it", /**
+     * With this we can exclude some browsers from particular test runs OR include just some browsers.
+     */
+    // { browser: ["!chrome"] },
+    () => {
       /**
        * Registering the request to be intercepted from the app.
        */

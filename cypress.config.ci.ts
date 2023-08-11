@@ -6,10 +6,10 @@ import { defineConfig } from "cypress";
  * created mostly in the Cypress dashboard.
  */
 export default defineConfig({
+  projectId: "syq3h8",
   viewportWidth: 1920,
   viewportHeight: 1080,
   e2e: {
-    video: false,
     baseUrl: "http://localhost:4200",
     specPattern: "cypress/e2e/**/*.spec.{js,jsx,ts,tsx}",
     excludeSpecPattern: [

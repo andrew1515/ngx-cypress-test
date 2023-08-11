@@ -1,6 +1,7 @@
 import { defineConfig } from "cypress";
 
 export default defineConfig({
+  projectId: "syq3h8",
   viewportWidth: 1920,
   viewportHeight: 1080,
   // Specific config for e2e tests. Some settings are available both as global config

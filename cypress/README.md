@@ -42,8 +42,23 @@ More info: https://docs.cypress.io/guides/guides/command-line#cypress-run-group-
 
 ### --ci-build-id
 
-It's not needed in the most cases, but in case of some CI environments we may need this. This is an unique ID for a particular CI run, which is provided automatically by most of the CI runners. It is needed for the `--parallel` and `--group` flags.
+It's not needed in the most cases, but in case of some CI environments we may need this. This is an unique ID for a particular CI run, which is provided automatically by most of the CI runners. It is needed for the `--parallel` and `--group` flags and this is the ID according to Cypress can group the tests from multiple `npx cypress run` commands (f.e. in case of parallelization - see below, or when we are grouping tests from multiple test runs, f.e. in the case when we are running a test run for every browser...in this case we have separate test runs, but we want it to look like one test run with multiple sub-groups for every browser).
 
 ### --parallel or running tests in parallel in CI
 
 If we turn this on and our CI environment supports this (so it have multiple machines), the tests will run in parallel.
+
+#### Do we need Cypress Dashboard for parallelization?
+
+YES! The parallelization works as following:
+
+1. Multiple `npx cypress run --parallel` commands will be started in the same CI run (so the `--ci-build-id` will be the same for all commands...they SHOULD be the same).
+
+- Technically we can start also two commands in parallel without some deeper configuration of the CI, I think also Github Actions should support this, like: `npx cypress run --parallel & npx cypress run --parallel`. This will run those two commands simultaneously and I think the CI will assign the commands to different threads or machines either. But it may differ in every CI environment.
+
+2. Because the `--parallel` flag, the machines in the CI run will contact Cypress Dashboard. The Dashboard then selects, which tests will a given machine run (basically a load balancing) and sends back the list of tests for each machine.
+
+3. All the machines then starts to run their list of tests and reports them back to Cypress Dashboard. The Dashboard then collects all the test results and merges them into one report.
+
+More info here: https://docs.cypress.io/guides/cloud/smart-orchestration/parallelization#CI-parallelization-interactions
+An open-source and free alternative for Cypress Dashboard (mainly for parallelization): https://sorry-cypress.dev/

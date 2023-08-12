@@ -1,4 +1,5 @@
 import { defineConfig } from "cypress";
+import { initPlugin } from "cypress-plugin-snapshots/plugin";
 
 export default defineConfig({
   projectId: "syq3h8",
@@ -14,27 +15,41 @@ export default defineConfig({
       "**/1-getting-started/*",
       "**/2-advanced-examples/*",
       "**/*.dontrun.spec.*",
+      "**/__snapshots__/*",
+      "**/__image_snapshots__/*"
     ],
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      // - implement node event listeners here
+      // - and initialize plugins here
+      initPlugin(on, config);
+      return config;
     },
     // How many times we want to retry failed tests.
     // runMode - if we run Cypress tests with 'npx cypress run' (mostly headless mode)
     // openMode - if we dun Cypress tests with 'npx cypress open'
     retries: {
       runMode: 1,
-      openMode: 0,
+      openMode: 0
     },
+    env: {
+      "cypress-plugin-snapshots": {
+        imageConfig: {
+          // Setting up threshold for the visual tests. That means, how much difference
+          // between snapshots is tolerated
+          threshold: 0.01
+        }
+      }
+    }
   },
   // Added reporters config. More info here: https://docs.cypress.io/guides/tooling/reporters
   reporter: "cypress-multi-reporters",
   reporterOptions: {
-    configFile: "reporter-config.json",
+    configFile: "reporter-config.json"
   },
   env: {
     apiUrl: "https://jsonplaceholder.typicode.com",
-    userEmail: "andras15@gmail.com",
-  },
+    userEmail: "andras15@gmail.com"
+  }
 });
 
 /**

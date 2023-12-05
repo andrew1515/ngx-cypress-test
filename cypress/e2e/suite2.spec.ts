@@ -58,6 +58,11 @@ describe("Querying DOM elements", () => {
      * With cy.get we can query the DOM elements with the JQuery query syntax. If the query matches
      * multiple elements, all the elements will be returned.
      *
+     * IMPORTANT: Chaining .get() commands isn't getting the descendant elements of the previous .get() commands.
+     *   So cy.get('.my-div').get('img') WON'T get the <img> from the .my-div element, it will search for the <img>
+     *   from scratch, in the whole document, not only in the .my-div. If you want to search only in the .my-div, you
+     *   should use the .find() method (see below) or the .contains() method (see below) if it suits for you.
+     *
      * cy.contains
      *
      * - With one parameter
@@ -70,7 +75,12 @@ describe("Querying DOM elements", () => {
      *
      *   as: Get me the element, which has the status attribute set to "warning" and contains the text "Sign in".
      *
-     * cy.contains also always return only ONE element - mostly the first found (on the contrary with cy.get, which returns all the matched elements)
+     * - cy.contains also always return only ONE element - mostly the first found (on the contrary with cy.get,
+     *   which returns all the matched elements).
+     * - cy.contains also searches for ALL elements which contain the given text, even if the particular element contains
+     *   more text then the text provided in the test.
+     *
+     *   F.e. cy.contains('world!') will match the <div> with the text "Hello world!".
      */
 
     cy.get('[data-cy="signInButton"]');
@@ -81,9 +91,16 @@ describe("Querying DOM elements", () => {
      *
      * parents
      * - It gets the parent elements of the queried element, with the given selector.
+     * - There is also a "parent()" command - the difference is, that parent() returns only the direct parent
+     *   of the element (so one level above), while parents() returns all the levels.
+     *
+     * children
+     * - It returns all the direct children of the element. If a selector provided, it returns only the children
+     *   which match the selector.
      *
      * find
-     * - find the children of the element matching the given query
+     * - Find descendants of the element matching the given query. It returns not only the direct children as the children()
+     *   command, but it searches through all the nested descendants.
      *
      * Assertions:
      *

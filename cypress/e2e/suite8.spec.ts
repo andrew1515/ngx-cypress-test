@@ -14,11 +14,9 @@ describe(
       cy.openHomePage();
     });
 
-    it("intercepting request from the app and getting the response from it", /**
+    it("intercepting request from the app and getting the response from it", /** // { browser: ["!chrome"] },
      * With this we can exclude some browsers from particular test runs OR include just some browsers.
-     */
-    // { browser: ["!chrome"] },
-    () => {
+     */ () => {
       /**
        * Registering the request to be intercepted from the app.
        */
@@ -44,8 +42,15 @@ describe(
        *    correct data are rendered.
        * 3) If we want to test whether the response is rendered correctly. In this case we don't bother about the data correctness,
        *    we just want to test, whether the data from the response are rendered correctly in the app.
+       *
+       * Note: if we don't want to work with the actual request/response data, we don't have to call the "then" method.
+       * It's good enough to have then just:
+       *
+       * cy.wait("@createNewUser");
+       *
+       * It will wait for calling the createNewUser request this way too.
        */
-      cy.wait("@createNewUser").then((interception) => {
+      cy.wait("@createNewUser").then(interception => {
         // This is the case 2). We are checking directly the response, because we aren't rendering the new user in the UI. But mostly
         // that's the case.
         expect(interception.response.statusCode).to.equal(201);
@@ -53,12 +58,12 @@ describe(
         expect(interception.response.body.email).to.equal("test1@gmail.com");
       });
 
-      cy.wait("@getUsers").then((interception) => {
+      cy.wait("@getUsers").then(interception => {
         // This is the case 3)
         const firstUser = interception.response.body[0];
         const secondUser = interception.response.body[1];
 
-        cy.get(".users-list").then((usersList) => {
+        cy.get(".users-list").then(usersList => {
           cy.wrap(usersList)
             .find("li.user-item")
             .eq(0)
@@ -88,7 +93,7 @@ describe(
        * rather using a mock.
        */
       cy.intercept("GET", `${Cypress.env("apiUrl")}/users`, {
-        fixture: "users.json",
+        fixture: "users.json"
       });
 
       navigation.navigateToFormLayouts();
@@ -97,11 +102,11 @@ describe(
        * We can read the data from the fixture, so if we are using our fixture data in the assertions,
        * we can be sure we are working with the same data what we provided as mock data in the request interception.
        */
-      cy.fixture("users.json").then((usersFixture) => {
+      cy.fixture("users.json").then(usersFixture => {
         const firstUser = usersFixture[0];
         const secondUser = usersFixture[1];
 
-        cy.get(".users-list").then((usersList) => {
+        cy.get(".users-list").then(usersList => {
           cy.wrap(usersList)
             .find("li")
             .eq(0)
@@ -118,6 +123,12 @@ describe(
             );
         });
       });
+
+      // Actually we can use aliases with fixtures too
+      cy.fixture("users.json").as("usersFixture");
+
+      // Then use it
+      // cy.get("@usersFixture").then((data) => {});
     });
 
     it("intercepting with wildcard url and route matcher object", () => {
@@ -132,11 +143,11 @@ describe(
         {
           method: "GET",
           // If we wouldn't bother about the hostname, we could just use "pathname: '/users/*'"
-          url: `${Cypress.env("apiUrl")}/users/*`,
+          url: `${Cypress.env("apiUrl")}/users/*`
         },
         {
           name: "Andrew Mock",
-          email: "mock@mock.com",
+          email: "mock@mock.com"
         }
       );
 
@@ -165,7 +176,7 @@ describe(
     });
 
     it("modifying request/response payload", { retries: 3 }, () => {
-      cy.intercept("POST", `${Cypress.env("apiUrl")}/users`, (req) => {
+      cy.intercept("POST", `${Cypress.env("apiUrl")}/users`, req => {
         // Modifying the request body
         req.body.name = "Modified request Andrew 2";
 
@@ -174,7 +185,7 @@ describe(
         // I really can't think of any use-cases for this, because if I would need an exact hardcoded
         // response in my tests, I would use a fully mocked response without touching the server.
         // But good to know there is such an option.
-        req.continue((res) => {
+        req.continue(res => {
           expect(res.body.name).to.equal("Modified request Andrew 2");
           res.body.name = "Modified response Andrew 2";
         });
@@ -183,7 +194,7 @@ describe(
       navigation.navigateToFormLayouts();
       formLayouts.submitInlineForm("Andrew 2", "test2@gmail.com");
 
-      cy.wait("@createNewUser").then((interception) => {
+      cy.wait("@createNewUser").then(interception => {
         // Again, we aren't rendering the new user in the UI, so we are checking the response directly.
         expect(interception.response.statusCode).to.equal(201);
         expect(interception.response.body.name).to.equal(
@@ -210,11 +221,11 @@ describe(
         method: "POST",
         body: {
           name: "Andrew 3",
-          email: "test3@gmail.com",
-        },
+          email: "test3@gmail.com"
+        }
       })
         .its("body")
-        .then((body) => {
+        .then(body => {
           cy.intercept(
             "DELETE",
             `${Cypress.env("apiUrl")}/users/${body.id}`
@@ -226,7 +237,7 @@ describe(
             .find(".delete-user")
             .click();
 
-          cy.wait("@deleteUser").then((interception) => {
+          cy.wait("@deleteUser").then(interception => {
             // Again, in practice, we are mostly checking the UI (whether the user is removed from the UI) and
             // not the response status code itself
             expect(interception.response.statusCode).to.equal(200);

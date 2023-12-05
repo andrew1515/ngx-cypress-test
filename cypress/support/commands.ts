@@ -31,6 +31,7 @@ declare namespace Cypress {
   interface Chainable {
     openHomePage(): void;
     login(): void;
+    getById(id: string): Cypress.Chainable<JQuery<HTMLElement>>;
   }
 }
 
@@ -60,4 +61,28 @@ Cypress.Commands.add("login", () => {
   cy.wrap(jwtToken).as("jwtToken");
   // Saving the token to the app's localStorage, so the API requests made from the app will have access to the token.
   window.localStorage.setItem("jwtToken", jwtToken);
+});
+
+/**
+ * Custom query.
+ * With this we can make our custom "get" queries for example. These queries will have the same properties
+ * as the built-in ones, so they are chainable and Cypress will also make retries on them. The advantage of
+ * custom queries over functions which are returning the query, like:
+ *
+ * function getById(id) {
+ *   return cy.get(`[data-cy="${id}"]`);
+ * }
+ *
+ * is mainly the chainability and a more unified syntax.
+ */
+Cypress.Commands.addQuery("getById", id => {
+  // Because the cy.get() command is asynchronous, if we would just return
+  // cy.get() in the returned function, our custom query won't work, because the cy.get() would
+  // be scheduled and not run immediately. So we need to use the cy.now() function to create a
+  // synchronous version of the cy.get() command to get it work.
+  const getFn = cy.now("get", `[data-cy="${id}"]`) as any;
+
+  return subject => {
+    return getFn(subject);
+  };
 });

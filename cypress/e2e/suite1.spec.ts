@@ -8,7 +8,9 @@ describe("Our first suite", () => {
 
 // We can have multiple "describe" blocks in one spec file
 describe("Our second suite", () => {
-  it("first test", () => {});
+  it("first test", () => {
+    cy.getById("haha").find("a");
+  });
 
   it("second test", () => {});
 
@@ -17,8 +19,11 @@ describe("Our second suite", () => {
   // We can have nested "describe" blocks
   describe("Nested suite", () => {
     beforeEach("code before every test in the current describe block", () => {
-      // So here we can have code, what we need to execute before every test in this block.
-      // It can be f.e. the login or reading some data from localStorage, etc.
+      /**
+       * Things to run before every test in the suite (the current describe block).
+       * So here we can have code, what we need to execute before every test in this block.
+       * It can be f.e. the login or reading some data from localStorage, etc.
+       */
     });
 
     it("first nested test", () => {});

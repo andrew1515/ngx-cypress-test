@@ -37,7 +37,7 @@ describe("then and wrap methods", () => {
      * - we want to use the queried DOM element in multiple cases and don't want to write the DOM query multiple times
      * - we want to run assertions depending on multiple DOM elements
      */
-    cy.contains("nb-card", "Using the Grid").then((firstForm) => {
+    cy.contains("nb-card", "Using the Grid").then(firstForm => {
       const firstEmailLabel = firstForm.find('[for="inputEmail1"]').text();
       const firstPasswordLabel = firstForm
         .find('[for="inputPassword2"]')
@@ -49,7 +49,7 @@ describe("then and wrap methods", () => {
       /**
        * We can have nested "then" calls if our tests are depending on multiple elements.
        */
-      cy.contains("nb-card", "Basic form").then((secondForm) => {
+      cy.contains("nb-card", "Basic form").then(secondForm => {
         const secondEmailLabel = secondForm
           .find('[for="exampleInputEmail1"]')
           .text();
@@ -64,5 +64,21 @@ describe("then and wrap methods", () => {
           .should("contain", "Password");
       });
     });
+
+    /**
+     * Actually there is an another alternative - ALIASES.
+     *
+     * We can do the following:
+     *
+     * cy.contains("nb-card", "Using the Grid").as("nbCard");
+     * cy.get("@nbCard").find('[for="inputEmail1"]').invoke("text").should("eq", "Email");
+     * cy.get("@nbCard").find('[for="inputPassword2"]').invoke("text").should("eq", "Password");
+     *
+     * --------
+     *
+     * BUT this has not the same behavior as when we do it with .then() and then calling the
+     * expect() methods - check the "Using `.then()` with callback vs `.should()` with callback" part in the
+     * README.
+     */
   });
 });

@@ -1,6 +1,6 @@
 import { navigation } from "../support/page-objects/navigationPage";
 
-describe("radio buttons and checkboxes", () => {
+describe("radio buttons, checkboxes and selects", () => {
   beforeEach(() => {
     cy.openHomePage();
   });
@@ -10,7 +10,7 @@ describe("radio buttons and checkboxes", () => {
 
     cy.contains("nb-card", "Using the Grid")
       .find('[type="radio"]')
-      .then((radioButtons) => {
+      .then(radioButtons => {
         /**
          * first - because "find" returns all the matched children, "radioButtons" can contain
          *   multiple DOM elements. "first" picks the first one from them.
@@ -31,14 +31,20 @@ describe("radio buttons and checkboxes", () => {
          * eq - if we have multiple JQuery elements, with "eq" we can select an exact one on
          *   the given index
          */
-        cy.wrap(radioButtons).eq(1).check({ force: true });
+        cy.wrap(radioButtons)
+          .eq(1)
+          .check({ force: true });
 
         // There can be always only one radio button checked. So if we check the first one,
         // then the second one (eq(1), so on the index 1), the first one should be unchecked.
-        // Note: cy(0) is identical to first().
-        cy.wrap(radioButtons).eq(0).should("not.be.checked");
+        // Note: eq(0) is identical to first().
+        cy.wrap(radioButtons)
+          .eq(0)
+          .should("not.be.checked");
 
-        cy.wrap(radioButtons).eq(2).should("be.disabled");
+        cy.wrap(radioButtons)
+          .eq(2)
+          .should("be.disabled");
       });
   });
 
@@ -48,6 +54,7 @@ describe("radio buttons and checkboxes", () => {
     /**
      * In the case we have multiple checkboxes returned by the query,
      * the check() method will check all of them.
+     *
      * This, however, isn't working on click() for example. For click() you should use the "multiple: true" property
      * to click through every element.
      *
@@ -82,11 +89,11 @@ describe("radio buttons and checkboxes", () => {
      */
     cy.get('[type="checkbox"]')
       .check({ force: true })
-      .each((checkbox) => {
+      .each(checkbox => {
         // Clicking on all the checkboxes to uncheck them.
         cy.wrap(checkbox).click({ force: true });
       })
-      .each((checkbox) => {
+      .each(checkbox => {
         // Checking whether every checkbox is unchecked.
         cy.wrap(checkbox).should("not.be.checked");
       });
@@ -99,5 +106,16 @@ describe("radio buttons and checkboxes", () => {
       .click({ multiple: true, force: true })
       // If asserting multiple elements (checkboxes in this case) with "should", the assertion will run on every element.
       .should("not.be.checked");
+  });
+
+  it("selects", () => {
+    navigation.navigateToFormLayouts();
+
+    /**
+     * select - selecting an option in a <select> element by the option value
+     */
+    cy.get("#select1")
+      .select("third")
+      .should("have.value", "third");
   });
 });

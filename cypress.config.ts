@@ -22,6 +22,34 @@ export default defineConfig({
       // - implement node event listeners here
       // - and initialize plugins here
       initPlugin(on, config);
+
+      // Tasks
+      //
+      // If you need to run some custom NodeJS code (so which can't be executed in the browser - like
+      // file access, seeding a DB ...), you should create a task.
+      // After you created a task, you can execute it anywhere in your tests with command:
+      //
+      // cy.task('seedDatabase', 'myfile.csv');
+      //
+      // If you want to access the returned value from the seedDatabase function, you can chain a "then"
+      // callback after the task execute:
+      //
+      // cy.task('seedDatabase', 'myfile.csv').then((val) => {
+      //   // do something with value
+      // });
+      //
+      // The returned value can be also a Promise, in that case Cypress will wait with the execution of
+      // the "then" block until the Promise resolves.
+      //
+      // More info - custom commands vs tasks:
+      // https://stackoverflow.com/questions/58680757/in-cypress-when-to-use-custom-command-vs-task
+      on("task", {
+        seedDatabase(filename) {
+          // perform NodeJS code.
+          return {};
+        }
+      });
+
       return config;
     },
     // How many times we want to retry failed tests.

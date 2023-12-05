@@ -26,9 +26,7 @@ describe("invoke command", () => {
      */
     cy.get('[for="exampleInputEmail1"]')
       .invoke("text")
-      .then((text) => {
-        expect(text).to.equal("Email address");
-      });
+      .should("be.equal", "Email address");
   });
 
   it("invoke command test - invoking class attribute", () => {
@@ -94,7 +92,7 @@ describe("invoke command", () => {
     // Wrapping everything into "then" block, because we will use the input element multiple times.
     cy.contains("nb-card", "Common Datepicker")
       .find("input")
-      .then((input) => {
+      .then(input => {
         cy.wrap(input).click();
 
         // This checks only that if we select the day 17 in the calendar, the input value will contain the number 17.
@@ -103,8 +101,12 @@ describe("invoke command", () => {
         // current date with the Date object and then select a day that is f.e. 5 days after the current date and then
         // assert that date. More info in the "Web Datepickers" lesson of the "Cypress: Web Automation Testing from Zero to Hero"
         // course.
-        cy.get("nb-calendar-day-picker").contains("17").click();
-        cy.wrap(input).invoke("prop", "value").should("contain", "17");
+        cy.get("nb-calendar-day-picker")
+          .contains("17")
+          .click();
+        cy.wrap(input)
+          .invoke("prop", "value")
+          .should("contain", "17");
       });
   });
 });
